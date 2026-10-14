@@ -1,0 +1,5 @@
+.env
+.env.local
+# exporty z Heliosu / Shoptetu jsou firemní data – do repa nepatří (repo může být veřejné)
+data/
+*.bat
