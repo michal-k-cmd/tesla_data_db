@@ -39,6 +39,10 @@ v `web/`, Postgres, sync_runs/sync_settings, přihlášení přes vinisto platfo
 - **IP whitelist** na straně Helios serveru – Vercel nemá stálou IP → z produkce
   se API nedovolá, dokud se nevyřeší (stálá IP / proxy ve firemní síti). Do té
   doby import JSON exportu (Helios → Import JSON), tvar stejný jako odpověď API.
+- **Odchozí IP se loguje** u každého volání API (`sync_runs.detail.egress` {ip, region},
+  `web/src/lib/egress.ts` přes api.ipify.org) + tlačítko „zjistit odchozí IP" a přehled
+  IP na stránce Helios (`/api/helios/egress`). Na Vercelu se odchozí IP mezi běhy mění,
+  DNS pro odchozí volání neexistuje – whitelist je jen podle IP.
 - Jejich skript volá `curl -k` → `HELIOS_TLS_INSECURE=1` vypne ověření certifikátu.
 - Nálezy ve vzorku dat (315 produktů): `MnozstviDispo` = 0 u 308 produktů
   a `JizNaSklade` vždy true (ověřit sklad s podporou); `cena_1` podle poměru

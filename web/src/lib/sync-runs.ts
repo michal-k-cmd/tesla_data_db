@@ -55,3 +55,23 @@ export async function listRuns(limit = 100, entity?: string): Promise<SyncRun[]>
     return [];
   }
 }
+
+export type EgressSeen = { ip: string; region: string | null; calls: number; last_at: string; last_status: string };
+
+/** odchozí IP adresy, ze kterých appka volala Helios (z detailu běhů) */
+export async function listEgressHistory(limit = 50): Promise<EgressSeen[]> {
+  try {
+    const { rows } = await getPool().query(
+      `SELECT detail->'egress'->>'ip' AS ip, max(detail->'egress'->>'region') AS region,
+              count(*)::int AS calls, max(started_at) AS last_at,
+              (array_agg(status ORDER BY started_at DESC))[1] AS last_status
+       FROM sync_runs
+       WHERE entity IN ('helios', 'helios_egress') AND detail->'egress'->>'ip' IS NOT NULL
+       GROUP BY 1 ORDER BY max(started_at) DESC LIMIT $1`,
+      [limit],
+    );
+    return rows;
+  } catch {
+    return [];
+  }
+}
